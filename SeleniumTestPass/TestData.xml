@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TestData>
+  <FormData>
+    <UserName>anand.bit.sin@gmail.com</UserName>
+    <Password>Gyan@123</Password>
+  </FormData>
+  <XPathData>
+    <Login>//*[@name='login']</Login>
+    <UserName>//*[@name='email']</UserName>
+    <Password>//*[@name='password']</Password>
+    <Submit>//*[@name='sbmt']</Submit>
+      <UserNav>//*[@name='sbmt']</UserNav>
+      <Search>//*[@id='searchbar']</Search>
+      <SearchTextBox>//*[@id='mysearch']</SearchTextBox>
+      <TopicSearchLabel>//*[@class='topic-search']</TopicSearchLabel>
+  </XPathData>
+</TestData>
