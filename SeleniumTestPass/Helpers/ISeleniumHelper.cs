@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenQA.Selenium;
 
 namespace SeleniumTestPass.Helpers
 {
-   interface ISeleniumHelper
+    interface ISeleniumHelper
     {
-        bool ExistsElement(string xpath);
-        void DoLogin(string username, string password);
-        void DoSearch(string searchText);
-        void DoLogout();
-        bool WaitTillDisplayed(string xpath);
+        bool ExistsElement(IWebDriver driver, string xpath);
+        void DoLogin(IWebDriver driver, string username, string password);
+        void DoSearch(IWebDriver driver, string searchText);
+        void DoLogout(IWebDriver driver);
+        bool WaitTillDisplayed(IWebDriver driver, string xpath);
     }
+
 }

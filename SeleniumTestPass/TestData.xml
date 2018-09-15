@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TestData>
   <FormData>
     <UserName>anand.bit.sin@gmail.com</UserName>
@@ -9,9 +9,9 @@
     <UserName>//*[@name='email']</UserName>
     <Password>//*[@name='password']</Password>
     <Submit>//*[@name='sbmt']</Submit>
-      <UserNav>//*[@name='sbmt']</UserNav>
-      <Search>//*[@id='searchbar']</Search>
-      <SearchTextBox>//*[@id='mysearch']</SearchTextBox>
-      <TopicSearchLabel>//*[@class='topic-search']</TopicSearchLabel>
+    <UserNav>//*[@name='usernav']</UserNav>
+    <Search>//*[@id='searchbar']</Search>
+    <SearchTextBox>//*[@id='mysearch']</SearchTextBox>
+    <TopicSearchLabel>//*[@class='topic-search']</TopicSearchLabel>
   </XPathData>
 </TestData>

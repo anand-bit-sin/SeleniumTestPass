@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Support.UI;
 
 namespace SeleniumTestPass.Helpers
 {
-    class SeleniumHelper: ISeleniumHelper
+    internal class SeleniumHelper : ISeleniumHelper
     {
-        IWebDriver driver;
-        public bool ExistsElement(String xpath)
+        XmlHelper xHelper = new XmlHelper();
+        public bool ExistsElement(IWebDriver driver, string xpath)
         {
             try
             {
@@ -24,25 +24,33 @@ namespace SeleniumTestPass.Helpers
             }
             return true;
         }
-        public void DoLogin(string username, string password)
+        public void DoLogin(IWebDriver driver, string username, string password)
         {
-            IWebElement userNameTextBox = driver.FindElement(By.Name("email"));
-            userNameTextBox.SendKeys("anand.bit.sin@gmail.com");
-            IWebElement passwordTextbox = driver.FindElement(By.Name("password"));
-            passwordTextbox.SendKeys("Gyan@123");
-
-            IWebElement submitButton = driver.FindElement(By.Name("sbmt"));
+            IWebElement userNameTextBox = driver.FindElement(By.XPath(xHelper.GetXPathData("UserName")));
+            userNameTextBox.SendKeys(username);
+            IWebElement passwordTextbox = driver.FindElement(By.XPath(xHelper.GetXPathData("Password")));
+            passwordTextbox.SendKeys(password);
+            IWebElement submitButton = driver.FindElement(By.XPath(xHelper.GetXPathData("Submit")));
             submitButton.Click();
         }
-        public void DoSearch(string searchText)
-        {
 
+        public void DoSearch(IWebDriver driver, string searchText)
+        {
+            // Find the search button and search
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            IWebElement searchButton = driver.FindElement(By.XPath(xHelper.GetXPathData("Search")));
+            searchButton.Click();
+
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            IWebElement searchTextBox = driver.FindElement(By.XPath(xHelper.GetXPathData("SearchTextBox")));
+            searchTextBox.SendKeys(searchText);
         }
 
-        public void DoLogout()
+        public void DoLogout(IWebDriver driver)
         {
             //Logout of the site
-            IWebElement userIconButton = driver.FindElement(By.XPath("//*[@id='usernav']"));
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            IWebElement userIconButton = driver.FindElement(By.XPath(xHelper.GetXPathData("UserNav")));
             userIconButton.Click();
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
@@ -55,20 +63,21 @@ namespace SeleniumTestPass.Helpers
             logoutLink.Click();
         }
 
-        public bool WaitTillDisplayed(string xpath)
+        public bool WaitTillDisplayed(IWebDriver driver, string xpath)
         {
             try
             {
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-                wait.Until(driver => !driver.FindElement(By.XPath(xpath)).Displayed);
+                wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(ElementNotVisibleException));
+                wait.Until(d => !d.FindElement(By.XPath(xpath)).Displayed);
                 return true;
             }
-            catch(NoSuchElementException e)
+            catch (Exception e)
             {
                 return false;
             }
         }
+    }
 }
 
-   
-}
+

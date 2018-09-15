@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.IE;
-using OpenQA.Selenium.Support.UI;
+using NUnit.Framework;
+using SeleniumTestPass.Helpers;
 
 namespace SeleniumTestPass
 {
     [TestFixture]
     public class TestCases
     {
+        SeleniumHelper automationHelper = new SeleniumHelper();
+        XmlHelper xHelper = new XmlHelper();
+
         [Test]
         public void TestCase1()
         {
@@ -25,7 +28,7 @@ namespace SeleniumTestPass
             catch (Exception ex)
             {
                 Console.WriteLine("TestCase1 failed with exception..");
-            }            
+            }
         }
 
         [TestCase]
@@ -33,32 +36,29 @@ namespace SeleniumTestPass
         {
             using (IWebDriver driver = new InternetExplorerDriver())
             {
-                //Check if logged in, go with test steps
-
                 // Navigate to the site
                 driver.Navigate().GoToUrl("https://www.amarujala.com/");
-
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);// ImplicitlyWait(TimeSpan.FromSeconds(10));
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
                 driver.Manage().Window.Maximize();
                 
-                //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(20);
+                if (automationHelper.WaitTillDisplayed(driver, xHelper.GetXPathData("UserNav")))
+                {
+                    automationHelper.DoLogout(driver);
+                }
 
                 // Find the login button by its name
-                IWebElement loginButton = driver.FindElement(By.Name("login"));
+                IWebElement loginButton = driver.FindElement(By.XPath(xHelper.GetXPathData("Login")));
                 loginButton.Click();
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
+                automationHelper.DoLogin(driver, xHelper.GetFormData("username"), xHelper.GetFormData("password"));
+                automationHelper.DoSearch(driver, "Pune");
 
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+                IWebElement searchLabel = driver.FindElement(By.XPath(xHelper.GetXPathData("TopicSearchLabel")));
+                Assert.IsTrue(searchLabel.Text == "Pune");
 
-                IWebElement userDetail = driver.FindElement(By.XPath("//*[@id='usernav']/h3"));
-                Console.WriteLine(userDetail.Text);
-                Assert.IsTrue(userDetail.Text == "Anand Kumar");
+                automationHelper.DoLogout(driver);
 
-
-
-                Console.WriteLine("User name verified and logged out");
-                Console.ReadLine();
                 driver.Quit();
             }
         }
@@ -66,7 +66,7 @@ namespace SeleniumTestPass
         [TestCase]
         public void TestCase3()
         {
-        
+
         }
     }
 }
