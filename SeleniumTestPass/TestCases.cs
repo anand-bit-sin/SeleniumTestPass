@@ -7,6 +7,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.IE;
 using NUnit.Framework;
 using SeleniumTestPass.Helpers;
+using OpenQA.Selenium.Interactions;
 
 namespace SeleniumTestPass
 {
@@ -19,31 +20,19 @@ namespace SeleniumTestPass
         [TestCase]
         public void TestCase1()
         {
+            string userNav = xHelper.GetXPathData("");
             using (IWebDriver driver = new InternetExplorerDriver())
             {
-                // Navigate to the site
-                driver.Navigate().GoToUrl("https://www.amarujala.com/");
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-                driver.Manage().Window.Maximize();
-                
-                if (automationHelper.WaitTillDisplayed(driver, xHelper.GetXPathData("UserNav")))
-                {
-                    automationHelper.DoLogout(driver);
-                }
+                // Navigate to the site and login
+                automationHelper.NavigateUrlAndLogin(driver);
 
-                // Find the login button by its name
-                IWebElement loginButton = driver.FindElement(By.XPath(xHelper.GetXPathData("Login")));
-                loginButton.Click();
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-
-                automationHelper.DoLogin(driver, xHelper.GetFormData("username"), xHelper.GetFormData("password"));
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
                 automationHelper.DoSearch(driver, "Pune");
 
                 if (automationHelper.WaitTillDisplayed(driver, xHelper.GetXPathData("TopicSearchLabel")))
                 {
                     IWebElement searchLabel = driver.FindElement(By.XPath(xHelper.GetXPathData("TopicSearchLabel")));
                     Assert.IsTrue(searchLabel.Text == "Pune");
+                    Console.WriteLine("Verified search label..");
                 }
                 else
                     Console.WriteLine("Topic search label did not appear.");
@@ -59,26 +48,20 @@ namespace SeleniumTestPass
         {
             using (IWebDriver driver = new InternetExplorerDriver())
             {
-                // Navigate to the site
-                driver.Navigate().GoToUrl("https://www.amarujala.com/");
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-                driver.Manage().Window.Maximize();
+                // Navigate to the site and login
+                automationHelper.NavigateUrlAndLogin(driver);
 
-                if (automationHelper.WaitTillDisplayed(driver, xHelper.GetXPathData("UserNav")))
-                {
-                    automationHelper.DoLogout(driver);
-                }
-
-                // Find the login button by its name
-                IWebElement loginButton = driver.FindElement(By.XPath(xHelper.GetXPathData("Login")));
-                loginButton.Click();
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-
-                automationHelper.DoLogin(driver, xHelper.GetFormData("username"), xHelper.GetFormData("password"));
                 automationHelper.CheckFacebookCommentInArticle(driver);
 
-                IWebElement facebookSection = driver.FindElement(By.XPath(xHelper.GetXPathData("Facebook")));
-                Assert.IsTrue(automationHelper.ExistsElement(driver, xHelper.GetXPathData("Facebook")));
+                if (automationHelper.WaitTillDisplayed(driver, xHelper.GetXPathData("Facebook")))
+                {
+                    IWebElement facebookSection = driver.FindElement(By.XPath(xHelper.GetXPathData("Facebook")));
+                    Assert.IsTrue(automationHelper.ExistsElement(driver, xHelper.GetXPathData("Facebook")));
+                    Console.WriteLine("Verified facebook section present to provide comments..");
+                }
+                else
+                    Console.WriteLine("Facebook section did not appear..");
+
                 automationHelper.DoLogout(driver);
 
                 driver.Quit();

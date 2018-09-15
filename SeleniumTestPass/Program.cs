@@ -12,7 +12,7 @@ namespace SeleniumTestPass
         {
             TestCases testPass = new TestCases();
             testPass.TestCase1();
-            //testPass.TestCase2();
+            testPass.TestCase2();
         }
     }
 }
