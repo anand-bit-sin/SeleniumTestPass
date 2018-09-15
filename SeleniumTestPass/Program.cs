@@ -11,8 +11,8 @@ namespace SeleniumTestPass
         static void Main(string[] args)
         {
             TestCases testPass = new TestCases();
-            testPass.TestCase2();
-            testPass.TestCase3();
+            testPass.TestCase1();
+            //testPass.TestCase2();
         }
     }
 }

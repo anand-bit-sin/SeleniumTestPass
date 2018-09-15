@@ -13,6 +13,7 @@ namespace SeleniumTestPass.Helpers
         void DoLogin(IWebDriver driver, string username, string password);
         void DoSearch(IWebDriver driver, string searchText);
         void DoLogout(IWebDriver driver);
+        void CheckFacebookCommentInArticle(IWebDriver driver);
         bool WaitTillDisplayed(IWebDriver driver, string xpath);
     }
 

@@ -1,17 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TestData>
   <FormData>
-    <UserName>anand.bit.sin@gmail.com</UserName>
-    <Password>Gyan@123</Password>
+    <UserName>XXXXX</UserName>
+    <Password>XXXXX</Password>
   </FormData>
   <XPathData>
     <Login>//*[@name='login']</Login>
     <UserName>//*[@name='email']</UserName>
     <Password>//*[@name='password']</Password>
     <Submit>//*[@name='sbmt']</Submit>
+    <Logout>//*[@id='auw_profile_logout']</Logout>
     <UserNav>//*[@name='usernav']</UserNav>
     <Search>//*[@id='searchbar']</Search>
     <SearchTextBox>//*[@id='mysearch']</SearchTextBox>
     <TopicSearchLabel>//*[@class='topic-search']</TopicSearchLabel>
+    <TrendingHotnews>//*[@class='trending hotnewsDv']</TrendingHotnews>
+    <NewsArticle1>//*[@id='fatafat-khabar']/li[1]</NewsArticle1>
+    <Facebook>//*[@id='facebook']</Facebook>
   </XPathData>
 </TestData>
