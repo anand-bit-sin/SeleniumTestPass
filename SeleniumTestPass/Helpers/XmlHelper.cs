@@ -11,6 +11,21 @@ namespace SeleniumTestPass.Helpers
     class XmlHelper : IXmlHelper
     {
         string testdataXmlFile = "TestData.xml";
+        public string GetNavigationData(string xmlTag)
+        {
+            XmlDocument testdata = new XmlDocument();
+            testdata.Load(testdataXmlFile);
+            XmlNode nodeFormData = testdata.SelectSingleNode("/TestData/NavigationData");
+            foreach (XmlNode node in nodeFormData.ChildNodes)
+            {
+                if (string.Equals(node.Name, xmlTag, StringComparison.InvariantCultureIgnoreCase) == true)
+                {
+                    return node.InnerText;
+                }
+            }
+
+            return "xml node not found";
+        }
         public string GetFormData(string xmlTag)
         {
             XmlDocument testdata = new XmlDocument();

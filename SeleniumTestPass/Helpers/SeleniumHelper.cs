@@ -8,6 +8,12 @@ namespace SeleniumTestPass.Helpers
     internal class SeleniumHelper : ISeleniumHelper
     {
         XmlHelper xHelper = new XmlHelper();
+
+        /// <summary>
+        /// Check if element exists on the page
+        /// </summary>
+        /// <param name="driver">webdriver used</param>
+        /// <param name="xpath">xpath of element to check</param>
         public bool ExistsElement(IWebDriver driver, string xpath)
         {
             try
@@ -18,17 +24,21 @@ namespace SeleniumTestPass.Helpers
             {
                 return false;
             }
+
             return true;
         }
 
+        /// <summary>
+        /// Check if element is displayed on page
+        /// </summary>
+        /// <param name="driver">webdriver used</param>
+        /// <param name="xpath">xpath of element to check</param>
         public bool WaitTillDisplayed(IWebDriver driver, string xpath)
         {
             try
             {
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-                //wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(ElementNotVisibleException));
                 wait.Until(ExpectedConditions.ElementExists(By.XPath(xpath)));
-                //wait.Until(d => d.FindElement(By.XPath(xpath)).Text != null);
                 return true;
             }
             catch (Exception e)
@@ -37,66 +47,90 @@ namespace SeleniumTestPass.Helpers
             }
         }
 
+        /// <summary>
+        /// Navigare to website and login if required
+        /// </summary>
+        /// <param name="driver">webdriver used</param>
         public void NavigateUrlAndLogin(IWebDriver driver)
         {
-            driver.Navigate().GoToUrl("https://www.amarujala.com/");
+            string websiteToNavigate = xHelper.GetNavigationData("SiteLink1");
+            string userNavXPath = xHelper.GetXPathData("UserNav");
+            string username = xHelper.GetFormData("UserName");
+            string password = xHelper.GetFormData("Password");
+            string loginButtonXPath = xHelper.GetXPathData("Login");
+
+            driver.Navigate().GoToUrl(websiteToNavigate);
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
             driver.Manage().Window.Maximize();
 
-            if (WaitTillDisplayed(driver, xHelper.GetXPathData("UserNav")))
+            if (WaitTillDisplayed(driver, userNavXPath))
             {
-                DoLogout(driver);
+                return;
             }
 
-            // Find the login button by its name
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-            IWebElement loginButton = driver.FindElement(By.XPath(xHelper.GetXPathData("Login")));
+            // Find the login button and click
+            IWebElement loginButton = driver.FindElement(By.XPath(loginButtonXPath));
             Actions actions = new Actions(driver);
             actions.MoveToElement(loginButton).Click().Perform();
 
-            //Click again if required
-            IJavaScriptExecutor jse = ((IJavaScriptExecutor)driver);
-            jse.ExecuteScript("window.scrollTo(0, 250)");
-            //if(!ExistsElement(driver, xHelper.GetFormData("username")))
-            //actions.MoveToElement(loginButton).Click().Perform();
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
-            DoLogin(driver, xHelper.GetFormData("username"), xHelper.GetFormData("password"));
+            DoLogin(driver, username, password);
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
+        /// <summary>
+        /// Navigare to website and login if required
+        /// </summary>
+        /// <param name="driver">webdriver used</param>
+        /// <param name="username">username for website</param>
+        /// <param name="password">password for the username</param>
         public void DoLogin(IWebDriver driver, string username, string password)
         {
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-            if (WaitTillDisplayed(driver, xHelper.GetXPathData("UserName")))
+            string usernameXPath = xHelper.GetXPathData("UserName");
+            string passwordXPath = xHelper.GetXPathData("Password");
+            string submitXPath = xHelper.GetXPathData("Submit");
+
+            if (WaitTillDisplayed(driver, usernameXPath))
             {
-                IWebElement userNameTextBox = driver.FindElement(By.XPath(xHelper.GetXPathData("UserName")));
+                IWebElement userNameTextBox = driver.FindElement(By.XPath(usernameXPath));
                 userNameTextBox.SendKeys(username);
-                IWebElement passwordTextbox = driver.FindElement(By.XPath(xHelper.GetXPathData("Password")));
+                IWebElement passwordTextbox = driver.FindElement(By.XPath(passwordXPath));
                 passwordTextbox.SendKeys(password);
-                IWebElement submitButton = driver.FindElement(By.XPath(xHelper.GetXPathData("Submit")));
+                IWebElement submitButton = driver.FindElement(By.XPath(submitXPath));
                 submitButton.Click();
             }
             else
-                Console.WriteLine("User name did not appear..");
+                Console.WriteLine("User name did not appear after login click");
         }
 
+        /// <summary>
+        /// Search for a text in searchtext
+        /// </summary>
+        /// <param name="driver">webdriver used</param>
+        /// <param name="searchText">text to search in the searchbox</param>
         public void DoSearch(IWebDriver driver, string searchText)
         {
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            string searchButtonXPath = xHelper.GetXPathData("Search");
+            string searchTextBoxXPath = xHelper.GetXPathData("SearchTextBox");
+
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+
             // Find the search button and search
-            if (WaitTillDisplayed(driver, xHelper.GetXPathData("Search")))
+            if (WaitTillDisplayed(driver, searchButtonXPath))
             {
-                IWebElement searchButton = driver.FindElement(By.XPath(xHelper.GetXPathData("Search")));
+                IWebElement searchButton = driver.FindElement(By.XPath(searchButtonXPath));
                 Actions actions = new Actions(driver);
                 actions.MoveToElement(searchButton).Click().Perform();
             }
             else
                 Console.WriteLine("Search button did not appear");
 
-            if (WaitTillDisplayed(driver, xHelper.GetXPathData("SearchTextBox")))
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+
+            if (WaitTillDisplayed(driver, searchTextBoxXPath))
             {
-                IWebElement searchTextBox = driver.FindElement(By.XPath(xHelper.GetXPathData("SearchTextBox")));
+                IWebElement searchTextBox = driver.FindElement(By.XPath(searchTextBoxXPath));
                 searchTextBox.SendKeys(searchText);
                 searchTextBox.SendKeys(Keys.Enter);
             }
@@ -104,12 +138,19 @@ namespace SeleniumTestPass.Helpers
                 Console.WriteLine("Search Text Box did not appear");
         }
 
+        /// <summary>
+        /// Do logout, click on user icon, scroll to logout link and click
+        /// </summary>
+        /// <param name="driver">webdriver used</param>
         public void DoLogout(IWebDriver driver)
         {
+            string userNavXPath = xHelper.GetXPathData("UserNav");
+            string logoutLinkXPath = xHelper.GetXPathData("Logout");
+
             //Logout of the site
-            if (WaitTillDisplayed(driver, xHelper.GetXPathData("UserNav")))
+            if (WaitTillDisplayed(driver, userNavXPath))
             {
-                IWebElement userIconButton = driver.FindElement(By.XPath(xHelper.GetXPathData("UserNav")));
+                IWebElement userIconButton = driver.FindElement(By.XPath(userNavXPath));
                 userIconButton.Click();
             }
             else
@@ -120,9 +161,9 @@ namespace SeleniumTestPass.Helpers
             jse.ExecuteScript("window.scrollTo(0, 250)");
 
             // Click on Logout
-            if (WaitTillDisplayed(driver, xHelper.GetXPathData("Logout")))
+            if (WaitTillDisplayed(driver, logoutLinkXPath))
             {
-                IWebElement logoutLink = driver.FindElement(By.XPath(xHelper.GetXPathData("Logout")));
+                IWebElement logoutLink = driver.FindElement(By.XPath(logoutLinkXPath));
                 logoutLink.Click();
                 Console.WriteLine("Done logout");
             }
@@ -130,25 +171,28 @@ namespace SeleniumTestPass.Helpers
                 Console.WriteLine("Logout link did not appear");
         }
 
+        /// <summary>
+        /// Check on hot news link and open first article to check facebook section
+        /// </summary>
+        /// <param name="driver">webdriver used</param>
         public void CheckFacebookCommentInArticle(IWebDriver driver)
         {
+            string trendingNewsXPath = xHelper.GetXPathData("TrendingHotnews");
+            string newsArticle1XPath = xHelper.GetXPathData("NewsArticle1");
+            string facebookSectionXPath = xHelper.GetXPathData("Facebook");
+
             WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            wait2.Until(ExpectedConditions.ElementToBeClickable(By.XPath(xHelper.GetXPathData("TrendingHotnews"))));
+            wait2.Until(ExpectedConditions.ElementToBeClickable(By.XPath(trendingNewsXPath)));
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-            IWebElement bellIconButton = driver.FindElement(By.XPath(xHelper.GetXPathData("TrendingHotnews")));
+            IWebElement bellIconButton = driver.FindElement(By.XPath(trendingNewsXPath));
             Actions actions = new Actions(driver);
             actions.MoveToElement(bellIconButton).Click().Perform();
 
-            IWebElement articleButton = driver.FindElement(By.XPath(xHelper.GetXPathData("NewsArticle1")));
+            IWebElement articleButton = driver.FindElement(By.XPath(newsArticle1XPath));
             articleButton.Click();
-
-            // Scroll down to reach the facebook section
-            IWebElement facebookSection = driver.FindElement(By.XPath(xHelper.GetXPathData("Facebook")));
-            IJavaScriptExecutor jse = ((IJavaScriptExecutor)driver);
-            jse.ExecuteScript("arguments[0].scrollIntoView();", facebookSection);
-
-            WaitTillDisplayed(driver, xHelper.GetXPathData("Facebook"));
+            
+            WaitTillDisplayed(driver, facebookSectionXPath);
         }        
     }
 }

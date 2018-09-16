@@ -8,6 +8,7 @@ namespace SeleniumTestPass.Helpers
 {
     interface IXmlHelper
     {
+        string GetNavigationData(string xmlTag);
         string GetFormData(string xmlTag);
         string GetXPathData(string xmlTag);
     }
